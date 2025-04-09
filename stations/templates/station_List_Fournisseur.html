@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <a href="/stations/add_station/{{username}}">ajouter station </a>
+    <h1>liste des votre station</h1>
+    <table>
+      <tr>
+        <td>adresse</td>
+        <td>puissance</td>
+        <td>prix_kw</td>
+        <td>photos</td>
+        <td>note</td>
+        <td>disponibilite</td>
+      </tr>
+      {% for station in stations %}
+
+      <tr>
+        <td>{{station.adresse}}</td>
+        <td>{{station.puissance}}</td>
+        <td>{{station.prix_kw}}</td>
+            <td>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                    {% for photo in station.photos.all %}
+                    <div
+                      style="display: flex; flex-direction: column; align-items: center"
+                    >
+                      <img src="{{ photo.image.url }}" alt="photo" width="100" />
+                    </div>
+                    {% endfor %}
+                  </div>
+              </td>
+        <td>{{note}}</td>
+        {% if station.disponibilite == 1 %}
+        <td>Disponible actuellement</td>
+        {% else %}
+        <td>Temporairement indisponible</td>
+        {% endif %}
+        <td>
+          <a href="/stations/delete_station/{{station.ID_Station}}/{{username}}"
+            >DELETE</a
+          >
+        </td>
+        <td>
+          <a
+            href="/stations/update_station/{{station.ID_Station}}/{{username}}"
+          >
+            update
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+  {% load static %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EV Charge Maroc</title>
+    <link
+      href="{% static 'media/EV Charge Maroc LOGO.png' %}"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+  </head>
+  <body>
+    <header class="page-header">
+      <div class="brand-container">
+        <img
+          src="{% static 'media/EV Charge Maroc LOGO.png' %}"
+          alt="EV Charge Maroc Logo"
+          class="logo-img"
+        />
+        <h1 class="brand-name">EV Charge Maroc</h1>
+      </div>
+      <nav class="navigation">
+        <a href="{% url 'Home:Home' %}" class="nav-link">Accueil</a>
+        <a href="#" class="nav-link">Stations</a>
+        <a href="#" class="nav-link">Reservations</a>
+      </nav>
+      <a
+        style="text-decoration: none"
+        href="{% url 'users:login' %}"
+        class="login-button"
+        >Connexion</a
+      >
+    </header>
+
+    <main class="main-content">
+      <section class="login-container">
+        <div class="login-card">
+          <div class="login-header">
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/42cc779b139db8de56c2eb12610cbdd39786f894"
+              alt="EV Charge Maroc Logo"
+              class="login-logo"
+            />
+            <h1 class="company-name">EV Charge Maroc</h1>
+            <h2 class="login-title">Connexion</h2>
+            <p class="login-subtitle">
+              Entrez vos identifiants pour accéder à votre compte
+            </p>
+          </div>
+
+          <form
+            id="login-form"
+            action="{% url 'users:login' %}"
+            method="post"
+            class="login-form"
+          >
+            {% csrf_token %}
+            <div class="user-type-tabs">
+              <label class="tab-button">
+                <input
+                  type="radio"
+                  id="proprietaire"
+                  name="user_type"
+                  value="proprietaire"
+                  checked
+                />
+                <label for="proprietaire">Propriétaire</label>
+              </label>
+              <label class="tab-button">
+                <input
+                  type="radio"
+                  id="fournisseur"
+                  name="user_type"
+                  value="fournisseur"
+                />
+                <label for="fournisseur">Fournisseur</label>
+              </label>
+              <label class="tab-button">
+                <input
+                  type="radio"
+                  id="Administrateur"
+                  name="user_type"
+                  value="Administrateur"
+                />
+                <label for="Administrateur">Administrateur</label>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                placeholder="xxxxxx@gmail.com"
+                required
+                class="form-input"
+              />
+            </div>
+
+            <div class="form-group">
+              <div class="password-header">
+                <label for="password" class="form-label">Mot de passe</label>
+                <a href="#" class="forgot-password">Mot de passe oublié?</a>
+              </div>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                minlength="8"
+                required
+                class="form-input"
+              />
+            </div>
+
+            <p class="signup-prompt">
+              Vous n'avez pas de compte?
+              <a href="{% url 'users:inscription'  %}" class="signup-link"
+                >S'inscrire</a
+              >
+            </p>
+
+            <button type="submit" class="submit-button">Se connecter</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-section company-info">
+          <h3 class="footer-brand">EV Charge Maroc</h3>
+          <p class="company-description">
+            Système de gestion des stations de recharge de véhicules électriques
+            au Maroc.
+          </p>
+        </div>
+
+        <div class="footer-section quick-links">
+          <h3 class="footer-heading">Liens Rapides</h3>
+          <ul class="footer-links">
+            <li><a href="#">Accueil</a></li>
+            <li><a href="#">Carte</a></li>
+            <li><a href="#">Stations</a></li>
+            <li><a href="#">Tarifs</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section support">
+          <h3 class="footer-heading">Support</h3>
+          <ul class="footer-links">
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Centre d'aide</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section social">
+          <h3 class="footer-heading">Suivez-nous</h3>
+          <div class="social-icons">
+            <a href="#" class="social-link">
+              <svg
+                width="25"
+                height="25"
+                viewBox="0 0 25 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                class="social-icon"
+              >
+                <path
+                  d="M18.3826 2.09619H15.3826C14.0565 2.09619 12.7847 2.62298 11.847 3.56066C10.9094 4.49834 10.3826 5.77011 10.3826 7.09619V10.0962H7.38257V14.0962H10.3826V22.0962H14.3826V14.0962H17.3826L18.3826 10.0962H14.3826V7.09619C14.3826 6.83097 14.4879 6.57662 14.6755 6.38908C14.863 6.20155 15.1174 6.09619 15.3826 6.09619H18.3826V2.09619Z"
+                  stroke="#020817"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            </a>
+            <a href="#" class="social-link">
+              <svg
+                width="25"
+                height="25"
+                viewBox="0 0 25 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                class="social-icon"
+              >
+                <path
+                  d="M22.3826 4.09621C22.3826 4.09621 21.6826 6.19621 20.3826 7.49621C21.9826 17.4962 10.9826 24.7962 2.38257 19.0962C4.58257 19.1962 6.78257 18.4962 8.38257 17.0962C3.38257 15.5962 0.882568 9.69621 3.38257 5.09621C5.58257 7.69621 8.98257 9.19621 12.3826 9.09621C11.4826 4.89621 16.3826 2.49621 19.3826 5.29621C20.4826 5.29621 22.3826 4.09621 22.3826 4.09621Z"
+                  stroke="#020817"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            </a>
+            <a href="#" class="social-link">
+              <svg
+                width="25"
+                height="25"
+                viewBox="0 0 25 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                class="social-icon"
+              >
+                <path
+                  d="M17.3826 2.09619H7.38257C4.62114 2.09619 2.38257 4.33477 2.38257 7.09619V17.0962C2.38257 19.8576 4.62114 22.0962 7.38257 22.0962H17.3826C20.144 22.0962 22.3826 19.8576 22.3826 17.0962V7.09619C22.3826 4.33477 20.144 2.09619 17.3826 2.09619Z"
+                  stroke="#020817"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+                <path
+                  d="M16.3825 11.466C16.5059 12.2983 16.3638 13.1482 15.9763 13.895C15.5888 14.6418 14.9757 15.2474 14.2241 15.6257C13.4726 16.0039 12.621 16.1356 11.7903 16.0019C10.9596 15.8683 10.1923 15.4761 9.59736 14.8812C9.00244 14.2862 8.61025 13.5189 8.47659 12.6882C8.34292 11.8576 8.47458 11.0059 8.85285 10.2544C9.23111 9.50286 9.83671 8.88975 10.5835 8.50225C11.3303 8.11475 12.1803 7.97259 13.0125 8.096C13.8614 8.22189 14.6474 8.61747 15.2542 9.22431C15.8611 9.83115 16.2566 10.6171 16.3825 11.466Z"
+                  stroke="#020817"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+                <path
+                  d="M17.8826 6.59619H17.8926"
+                  stroke="#020817"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="copyright">© 2025 EV Maroc. Tous droits réservés.</p>
+        <div class="legal-links">
+          <a href="#" class="legal-link">Politique de confidentialité</a>
+          <a href="#" class="legal-link">Conditions d'utilisation</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

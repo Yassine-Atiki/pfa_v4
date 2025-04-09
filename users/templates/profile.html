@@ -1,0 +1,341 @@
+{% load static %}{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profil - EV Charge Maroc</title>
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="nav-container">
+        <div class="logo-section">
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets/bf3934ef47c34024b3445b90b3c37150/72208f50abba26a4640f059b058ed534b08a7c12?placeholderIfAbsent=true"
+            alt="EV Charge Maroc Logo"
+            class="logo-image"
+          />
+          <a href="/" class="brand-name">EV Charge Maroc</a>
+        </div>
+        <nav class="main-nav">
+          <a href="{% url 'Home:Home' user.username %}" class="nav-link">Accueil</a>
+          {% if user|is_instance_of:"users.models.Fournisseur" %}
+          <a href="/stations/station_List_Fournisseur/{{ user.username }}" class="nav-link">Stations</a>
+          <a href="#" class="nav-link">Reservations</a>
+          {% else %}
+          <a href="#" class="nav-link">Stations</a>
+          <a href="#" class="nav-link">Reservations</a>
+          {% endif %}
+        </nav>
+        <a
+        href="{% url 'Home:logout' %}"
+        class="btn btn-primary"
+        style="text-decoration: none"
+        >Déconnexion</a
+      >
+      </nav>
+    </header>
+
+    <main class="main-content">
+      <section class="page-header">
+        <div class="security-icon-container">
+          <svg
+            class="shield-icon"
+            width="24"
+            height="24"
+            viewBox="0 0 25 25"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M20.2105 13.8901C20.2105 18.8901 16.7105 21.3901 12.5505 22.8401C12.3327 22.9139 12.096 22.9104 11.8805 22.8301C7.71051 21.3901 4.21051 18.8901 4.21051 13.8901V6.8901C4.21051 6.62488 4.31587 6.37053 4.5034 6.18299C4.69094 5.99546 4.94529 5.8901 5.21051 5.8901C7.21051 5.8901 9.71051 4.6901 11.4505 3.1701C11.6624 2.9891 11.9319 2.88965 12.2105 2.88965C12.4892 2.88965 12.7587 2.9891 12.9705 3.1701C14.7205 4.7001 17.2105 5.8901 19.2105 5.8901C19.4757 5.8901 19.7301 5.99546 19.9176 6.18299C20.1052 6.37053 20.2105 6.62488 20.2105 6.8901V13.8901Z"
+              stroke="#16A34A"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></path>
+          </svg>
+        </div>
+        <h2 class="page-title">Profil</h2>
+        <a href="{% url 'Home:Home' user.username %}" class="back-button">Retour</a>
+      </section>
+
+      <div class="profile-container">
+        <aside class="profile-sidebar">
+          <div class="sidebar-content">
+            <div class="avatar-container">
+              <svg
+                class="user-icon"
+                width="24"
+                height="24"
+                viewBox="0 0 25 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M19.2105 21.8901V19.8901C19.2105 18.8293 18.7891 17.8119 18.0389 17.0617C17.2888 16.3116 16.2714 15.8901 15.2105 15.8901H9.21051C8.14964 15.8901 7.13223 16.3116 6.38208 17.0617C5.63194 17.8119 5.21051 18.8293 5.21051 19.8901V21.8901"
+                  stroke="#16A34A"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+                <path
+                  d="M12.2105 11.8901C14.4196 11.8901 16.2105 10.0993 16.2105 7.89014C16.2105 5.681 14.4196 3.89014 12.2105 3.89014C10.0014 3.89014 8.21051 5.681 8.21051 7.89014C8.21051 10.0993 10.0014 11.8901 12.2105 11.8901Z"
+                  stroke="#16A34A"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            </div>
+            <br><h3 class="user-name">{{user.username}}</h3><br>
+            <p class="user-role">{{user_type}}</p>
+            <hr class="sidebar-divider" />
+            <nav class="profile-nav">
+              <a href="#" class="profile-nav-link active" id="profile-tab"
+                >Informations personnelles</a
+              >
+              <a href="#" class="profile-nav-link" id="security-tab" >Sécurité</a>
+            </nav>
+          </div>
+        </aside>
+
+        <section class="profile-content">
+          <div id="profile-card">
+          <header class="section-header">
+            <h3 class="section-title">Informations personnelles</h3>
+            <p class="section-description">
+              Mettez à jour vos informations personnelles
+            </p>
+            {% if error %}
+          <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        {% if success %}
+          <p style="color: green;">{{ success }}</p>
+        {% endif %}
+          </header>
+
+          <form class="profile-form" action="{% url 'users:profile' user.username %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_info" />
+            <div class="form-row">
+              <div class="form-group">
+                <label for="first_name" class="form-label">Prénom</label>
+                <input type="text" id="first_name" value="{{user.first_name}}" required class="form-input" />
+              </div>
+              <div class="form-group">
+                <label for="last_name" class="form-label">Nom</label>
+                <input type="text" id="last_name" value="{{user.last_name}}" class="form-input" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="username" class="form-label">Username</label>
+              <input
+                type="text"
+                name="username"
+                id="username"
+                required
+                value="{{user.username}}"
+                class="form-input"
+              />
+            </div><br>
+
+            
+            <div class="form-group">
+              <label for="CIN" class="form-label"
+                >CIN (Carte d'Identité Nationale)</label
+              >
+              <input
+                type="text"
+                name="CIN"
+                id="CIN"
+                minlength="8"
+                maxlength="8"
+                placeholder="XXxxxxxx"
+                value="{{user.CIN}}"
+                required
+                class="form-input"
+              />
+            </div><br>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" placeholder="xxxxxx@gmail.com" value="{{user.email}}" required class="form-input" />
+              </div>
+
+              <div class="form-group">
+                <label for="phone_number" class="form-label">Téléphone</label>
+                <input type="tel" name="phone_number" id="phone_number" value="{{user.phone_number}}" minlength="10"
+                maxlength="10"
+                placeholder="06xxxxxxxx"
+                required class="form-input" />
+              </div>
+
+            </div> <!-- Closing the form-row div -->
+            
+            <br><br><button type="submit" class="submit-button">
+              Enregistrer les modifications
+            </button>
+          </div>
+        </form>
+        <form class="profile-form" action="{% url 'users:profile' user.username %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_password" />
+            
+          <div id="security-card" style="display: none;">
+            <header class="section-header">
+              <h3 class="section-title">Sécurité</h3>
+              <p class="section-description">
+                Mettez à jour votre mot de passe
+              </p>
+            </header><br><br>
+            <input type="hidden" name="action" value="update_password" />
+            <div class="form-group">
+              <label for="last_password" class="form-label">Mot de passe actuel</label>
+              <input type="password" name="last_password" id="last_password" minlength="8" required class="form-input" />
+            </div><br>
+            <div class="form-group">
+              <label for="new_password" class="form-label">Nouveau mot de passe</label>
+              <input type="password" name="new_password" id="new_password" minlength="8" required class="form-input" />
+            </div><br>
+            <div class="form-group">
+              <label for="confirm_password" class="form-label">Confirmer le mot de passe</label>
+              <input type="password" name="confirm_password" id="confirm_password" minlength="8" required class="form-input" />
+            </div>
+            <br><br><button type="submit" class="submit-button">
+              Enregistrer le mot de passe
+            </button>
+          </div>
+          </div> 
+          </form>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/42cc779b139db8de56c2eb12610cbdd39786f894"
+            alt="Logo"
+            class="footer-logo"
+          />
+          <h2 class="footer-brand-name">EV Charge Maroc</h2>
+          <p class="footer-description">
+            Système de gestion des stations de recharge de véhicules électriques
+            au Maroc.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h3 class="footer-links-title">Liens Rapides</h3>
+          <nav class="footer-nav">
+            <a href="#" class="footer-nav-link">Accueil</a>
+            <a href="#" class="footer-nav-link">Reservations</a>
+            <a href="#" class="footer-nav-link">Stations</a>
+          </nav>
+        </div>
+
+        <div class="footer-support">
+          <h3 class="footer-support-title">Support</h3>
+          <nav class="footer-nav">
+            <a href="#" class="footer-nav-link">FAQ</a>
+            <a href="#" class="footer-nav-link">Contact</a>
+            <a href="#" class="footer-nav-link">Centre d'aide</a>
+          </nav>
+        </div>
+
+        <div class="footer-social">
+          <h3 class="footer-social-title">Suivez-nous</h3>
+          <div class="social-icons">
+            <a href="#" class="social-icon-link">
+              <svg
+                class="social-icon"
+                width="20"
+                height="20"
+                viewBox="0 0 21 21"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15.5 2.33643H13C11.895 2.33643 10.8352 2.77541 10.0538 3.55681C9.27236 4.33822 8.83337 5.39802 8.83337 6.50309V9.00309H6.33337V12.3364H8.83337V19.0031H12.1667V12.3364H14.6667L15.5 9.00309H12.1667V6.50309C12.1667 6.28208 12.2545 6.07012 12.4108 5.91384C12.5671 5.75756 12.779 5.66976 13 5.66976H15.5V2.33643Z"
+                  stroke="#020817"
+                  stroke-width="1.66667"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            </a>
+            <a href="#" class="social-icon-link">
+              <svg
+                class="social-icon"
+                width="20"
+                height="20"
+                viewBox="0 0 21 21"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18.8333 4.00311C18.8333 4.00311 18.25 5.75311 17.1666 6.83644C18.5 15.1698 9.33329 21.2531 2.16663 16.5031C3.99996 16.5864 5.83329 16.0031 7.16663 14.8364C2.99996 13.5864 0.916626 8.66978 2.99996 4.83644C4.83329 7.00311 7.66663 8.25311 10.5 8.16978C9.74996 4.66978 13.8333 2.66978 16.3333 5.00311C17.25 5.00311 18.8333 4.00311 18.8333 4.00311Z"
+                  stroke="#020817"
+                  stroke-width="1.66667"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            </a>
+            <a href="#" class="social-icon-link">
+              <svg
+                class="social-icon"
+                width="20"
+                height="20"
+                viewBox="0 0 21 21"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M14.6666 2.33643H6.33329C4.03211 2.33643 2.16663 4.20191 2.16663 6.50309V14.8364C2.16663 17.1376 4.03211 19.0031 6.33329 19.0031H14.6666C16.9678 19.0031 18.8333 17.1376 18.8333 14.8364V6.50309C18.8333 4.20191 16.9678 2.33643 14.6666 2.33643Z"
+                  stroke="#020817"
+                  stroke-width="1.66667"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+                <path
+                  d="M13.8334 10.1447C13.9362 10.8382 13.8178 11.5465 13.4948 12.1689C13.1719 12.7912 12.661 13.2959 12.0347 13.6111C11.4085 13.9263 10.6987 14.036 10.0065 13.9246C9.31431 13.8132 8.67484 13.4864 8.17907 12.9907C7.6833 12.4949 7.35648 11.8554 7.2451 11.1632C7.13371 10.471 7.24343 9.76126 7.55865 9.135C7.87386 8.50873 8.37853 7.9978 9.00086 7.67489C9.62319 7.35197 10.3315 7.23351 11.025 7.33635C11.7325 7.44126 12.3874 7.7709 12.8931 8.27661C13.3988 8.78231 13.7285 9.43725 13.8334 10.1447Z"
+                  stroke="#020817"
+                  stroke-width="1.66667"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+                <path
+                  d="M15.0834 6.08643H15.0917"
+                  stroke="#020817"
+                  stroke-width="1.66667"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="copyright">© 2025 EV Charge Maroc. Tous droits réservés.</p>
+        <div class="legal-links">
+          <a href="#" class="legal-link">Politique de confidentialité</a>
+          <a href="#" class="legal-link">Conditions d'utilisation</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/profile.js' %}"></script>

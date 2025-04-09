@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Station</title>
+  </head>
+  <body>
+    <h1>Modifier la station</h1>
+    <form
+      action="{% url 'stations:update_station' station.ID_Station username %}"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      {% csrf_token %}
+      <label for="adresse">Adresse</label>
+      <input
+        type="text"
+        name="adresse"
+        id="adresse"
+        value="{{ station.adresse }}"
+        required
+      />
+
+      <label for="puissance">Puissance en kW</label>
+      <input
+        type="number"
+        name="puissance"
+        id="puissance"
+        value="{{ station.puissance }}"
+        required
+      />
+
+      <label for="prix_kw">Prix par KW</label>
+      <input
+        type="number"
+        name="prix_kw"
+        id="prix_kw"
+        value="{{ station.prix_kw }}"
+        required
+      />
+
+      <label>Disponibilité</label><br />
+
+      <input type="radio" name="disponibilite" id="disponibilite_oui" value="1"
+      {% if station.disponibilite == 1 %} checked {% endif %} required />
+      <label for="disponibilite_oui">Disponible actuellement</label><br />
+
+      <input type="radio" name="disponibilite" id="disponibilite_non" value="0"
+      {% if station.disponibilite == 0 %} checked {% endif %} required />
+      <label for="disponibilite_non">Temporairement indisponible</label>
+
+      <tr>
+        <td>Images :</td>
+        <td>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            {% for photo in station.photos.all %}
+            <div
+              style="display: flex; flex-direction: column; align-items: center"
+            >
+              <img src="{{ photo.image.url }}" alt="photo" width="100" />
+              <a
+                href="{% url 'stations:delete_photo' station.ID_Station photo.id username %}"
+                >🗑️ Supprimer</a
+              >
+            </div>
+            {% endfor %}
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="2">
+          <label for="photos">📸 Ajouter des photos :</label><br />
+          <input
+            type="file"
+            id="photos"
+            name="photos[]"
+            accept="image/*"
+            multiple
+          />
+        </td>
+      </tr>
+
+      <button type="submit">Mettre à jour</button>
+    </form>
+    <script>
+      const input = document.getElementById("photos");
+      const form = document.querySelector("form");
+      const errorMsg = document.createElement("div");
+      form.appendChild(errorMsg);
+
+      input.addEventListener("change", function () {
+        if (this.files.length > 5) {
+          errorMsg.textContent =
+            "⚠️ Vous pouvez sélectionner un maximum de 5 photos.";
+          this.value = ""; // Réinitialiser le champ
+        } else {
+          errorMsg.textContent = "";
+        }
+      });
+    </script>
+  </body>
+</html>

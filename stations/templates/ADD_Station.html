@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form action="{% url 'stations:add_station' username %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <label for="adresse">Adresse</label>
+      <input type="text" name="adresse" id="adresse" required />
+
+      <label for="puissance">Puissance en kW</label>
+      <input type="number" name="puissance" id="puissance" required />
+
+      <label for="prix_kw">Prix par KW</label>
+      <input type="number" name="prix_kw" id="prix" required />
+
+      <label for="disponibilite">Disponibilité</label>
+      <input
+        type="radio"
+        name="disponibilite"
+        id="disponibilite"
+        value="1"
+        required
+      />
+      Disponible actuellement
+      <input
+        type="radio"
+        name="disponibilite"
+        id="disponibilite"
+        value="0"
+        required
+      />
+      Temporairement indisponible
+
+      <label for="photos">📸 Ajouter des photos :</label><br />
+      <input
+        type="file"
+        id="photos"
+        name="photos[]"
+        accept="image/*"
+        multiple
+      />
+
+      <button type="submit">Submit</button>
+    </form>
+    <script>
+      const input = document.getElementById("photos");
+      const form = document.getElementById("uploadForm");
+      const errorMsg = document.getElementById("errorMsg");
+
+      input.addEventListener("change", function () {
+        if (this.files.length > 5) {
+          errorMsg.textContent =
+            "⚠️ You can only select a maximum of 5 photos.";
+          this.value = ""; // Réinitialiser le champ
+        } else {
+          errorMsg.textContent = "";
+        }
+      });
+
+      form.addEventListener("submit", function (e) {
+        if (input.files.length > 5) {
+          e.preventDefault();
+          errorMsg.textContent =
+            "Please select a maximum of 5 photos before submitting.";
+        }
+      });
+    </script>
+  </body>
+</html>
