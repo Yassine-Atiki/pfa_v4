@@ -176,30 +176,34 @@
 
       // Définir les icônes personnalisées
       var greenIcon = L.icon({
-        iconUrl:
-          "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+        iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
-        shadowUrl:
-          "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+        shadowSize: [41, 41],
+      });
+
+      var orangeIcon = L.icon({
+        iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
         shadowSize: [41, 41],
       });
 
       var redIcon = L.icon({
-        iconUrl:
-          "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+        iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
-        shadowUrl:
-          "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
         shadowSize: [41, 41],
       });
 
       var userIcon = L.icon({
-        iconUrl:
-          "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
         iconSize: [25, 41],
         iconAnchor: [12, 41],
       });
@@ -239,15 +243,22 @@
           }
 
           var popupContent = `
-      <b>${station.name || "Nom inconnu"}</b><br>
-      <b>Adresse :</b> ${station.address || "Adresse inconnue"}<br>
-      <b>Connecteurs :</b> ${station.connector_types || "Non spécifié"}<br>
-      <b>Puissance :</b> ${station.power || "Non spécifié"}<br>
-      <b>Opérateur :</b> ${station.operator || "Opérateur inconnu"}<br>
-      <b>État :</b> ${station.available ? "Opérationnelle" : "Hors service"}
-    `;
+            <b>${station.name || "Nom inconnu"}</b><br>
+            <b>Adresse :</b> ${station.address || "Adresse inconnue"}<br>
+            <b>Connecteurs :</b> ${station.connector_types || "Non spécifié"}<br>
+            <b>Puissance :</b> ${station.power || "Non spécifié"}<br>
+            <b>Opérateur :</b> ${station.operator || "Opérateur inconnu"}<br>
+            <b>État :</b> ${station.available ? "Opérationnelle" : "Hors service"}<br>
+            <b>Propriétaire :</b> ${station.has_username ? "Fournisseur" : "Importée (OpenChargeMap)"}
+          `;
 
-          var icon = station.available ? greenIcon : redIcon;
+          // Déterminer l'icône en fonction de l'état et de la présence d'un username
+          var icon;
+          if (!station.available) {
+            icon = redIcon; // Station hors service → rouge
+          } else {
+            icon = station.has_username ? greenIcon : orangeIcon; // Station opérationnelle : vert si username, orange sinon
+          }
 
           var marker = L.marker([station.lat, station.lng], { icon: icon })
             .addTo(map)

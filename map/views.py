@@ -1,31 +1,20 @@
-import json
-from django.shortcuts import render
 from django.http import JsonResponse
+from django.shortcuts import render
 from stations.models import station
-from math import radians, sin, cos, sqrt, atan2
-
-def haversine(lat1, lon1, lat2, lon2):
-    R = 6371
-    dlat = radians(lat2 - lat1)
-    dlon = radians(lon2 - lon1)
-    a = sin(dlat/2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon/2)**2
-    c = 2 * atan2(sqrt(a), sqrt(1-a))
-    return R * c
 
 def map_view(request):
     if request.method == "POST":
         try:
             user_lat = float(request.POST.get('lat'))
             user_lon = float(request.POST.get('lon'))
+            print(f"Position de l'utilisateur : lat={user_lat}, lon={user_lon}")
         except (ValueError, TypeError):
             return JsonResponse({'error': 'Coordonnées invalides'}, status=400)
 
-        # Récupérer toutes les stations
         stations = station.objects.all()
-        print(f"Nombre total de stations récupérées : {stations.count()}")  # Log
+        print(f"Nombre total de stations récupérées : {stations.count()}")
 
-        # Renvoyer les stations avec des coordonnées valides
-        nearby_stations = []
+        all_stations = []
         for s in stations:
             if s.latitude is None or s.longitude is None:
                 print(f"Station ignorée (coordonnées manquantes) : {s.nom}")
@@ -33,7 +22,11 @@ def map_view(request):
             try:
                 lat = float(s.latitude)
                 lng = float(s.longitude)
-                nearby_stations.append({
+                if lat < -90 or lat > 90 or lng < -180 or lng > 180:
+                    print(f"Station ignorée (coordonnées hors limites) : {s.nom}, latitude={lat}, longitude={lng}")
+                    continue
+                available = bool(s.disponibilite) if s.disponibilite is not None else True
+                all_stations.append({
                     'name': s.nom if s.nom else "Nom inconnu",
                     'lat': lat,
                     'lng': lng,
@@ -41,13 +34,15 @@ def map_view(request):
                     'connector_types': s.connector_types if s.connector_types else "Non spécifié",
                     'power': s.power if s.power else "Non spécifié",
                     'operator': s.operator if s.operator else "Opérateur inconnu",
-                    'available': s.disponibilite
+                    'available': available,
+                    'has_username': s.username is not None  # Indique si la station a un username
                 })
+                print(f"Station ajoutée : {s.nom}, lat={lat}, lng={lng}, available={available}, has_username={s.username is not None}")
             except (ValueError, TypeError):
                 print(f"Station ignorée (coordonnées invalides) : {s.nom}, latitude={s.latitude}, longitude={s.longitude}")
                 continue
 
-        print(f"Nombre de stations valides : {len(nearby_stations)}")  # Log
-        return JsonResponse({'stations': nearby_stations})
+        print(f"Nombre total de stations valides : {len(all_stations)}")
+        return JsonResponse({'stations': all_stations})
 
     return render(request, 'map.html', {})
