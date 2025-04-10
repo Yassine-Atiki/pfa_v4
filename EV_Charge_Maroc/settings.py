@@ -33,7 +33,6 @@ CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
 
 INSTALLED_APPS = [
     'map.apps.MapConfig',
-    #'charging_stations.apps.ChargingStationsConfig',
     'stations.apps.StationsConfig',
     'users.apps.UsersConfig',
     'Home.apps.HomeConfig',
@@ -133,3 +132,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.Users'  
+
