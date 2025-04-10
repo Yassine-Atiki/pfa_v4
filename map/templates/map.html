@@ -41,10 +41,7 @@
           <a href="" class="nav-link">Stations</a>
           <a href="/reservations" class="nav-link">Reservations</a>
         </nav>
-        <a
-          class="btn btn-primary"
-          href="{% url 'users:login' %}"
-        >
+        <a class="btn btn-primary" href="{% url 'users:login' %}">
           Connexion
         </a>
       </nav>
@@ -179,25 +176,30 @@
 
       // Définir les icônes personnalisées
       var greenIcon = L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+        iconUrl:
+          "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-        shadowSize: [41, 41]
+        shadowUrl:
+          "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+        shadowSize: [41, 41],
       });
 
       var redIcon = L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        iconUrl:
+          "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-        shadowSize: [41, 41]
+        shadowUrl:
+          "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+        shadowSize: [41, 41],
       });
 
       var userIcon = L.icon({
-        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+        iconUrl:
+          "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
         iconSize: [25, 41],
         iconAnchor: [12, 41],
       });
@@ -205,62 +207,70 @@
       // Fonction pour afficher les stations sur la carte
       function displayStations(stations, userPosition) {
         console.log("Stations reçues :", stations);
-        var bounds = L.latLngBounds();
         var validStations = 0;
 
         stations.forEach(function (station) {
-          // Vérifier que les coordonnées sont des nombres valides
           if (
-            typeof station.lat !== 'number' ||
-            typeof station.lng !== 'number' ||
+            typeof station.lat !== "number" ||
+            typeof station.lng !== "number" ||
             isNaN(station.lat) ||
             isNaN(station.lng)
           ) {
-            console.log(`Station ignorée (coordonnées invalides) : ${station.name || 'Nom inconnu'}`);
+            console.log(
+              `Station ignorée (coordonnées invalides) : ${
+                station.name || "Nom inconnu"
+              }`
+            );
             return;
           }
 
-          // Vérifier que les coordonnées sont dans des plages valides
           if (
-            station.lat < -90 || station.lat > 90 ||
-            station.lng < -180 || station.lng > 180
+            station.lat < -90 ||
+            station.lat > 90 ||
+            station.lng < -180 ||
+            station.lng > 180
           ) {
-            console.log(`Station ignorée (coordonnées hors limites) : ${station.name || 'Nom inconnu'}, lat=${station.lat}, lng=${station.lng}`);
+            console.log(
+              `Station ignorée (coordonnées hors limites) : ${
+                station.name || "Nom inconnu"
+              }, lat=${station.lat}, lng=${station.lng}`
+            );
             return;
           }
 
           var popupContent = `
-            <b>${station.name || 'Nom inconnu'}</b><br>
-            <b>Adresse :</b> ${station.address || 'Adresse inconnue'}<br>
-            <b>Connecteurs :</b> ${station.connector_types || 'Non spécifié'}<br>
-            <b>Puissance :</b> ${station.power || 'Non spécifié'}<br>
-            <b>Opérateur :</b> ${station.operator || 'Opérateur inconnu'}<br>
-            <b>État :</b> ${station.available ? "Opérationnelle" : "Hors service"}
-          `;
+      <b>${station.name || "Nom inconnu"}</b><br>
+      <b>Adresse :</b> ${station.address || "Adresse inconnue"}<br>
+      <b>Connecteurs :</b> ${station.connector_types || "Non spécifié"}<br>
+      <b>Puissance :</b> ${station.power || "Non spécifié"}<br>
+      <b>Opérateur :</b> ${station.operator || "Opérateur inconnu"}<br>
+      <b>État :</b> ${station.available ? "Opérationnelle" : "Hors service"}
+    `;
 
-          // Choisir l'icône en fonction de l'état de la station
           var icon = station.available ? greenIcon : redIcon;
 
           var marker = L.marker([station.lat, station.lng], { icon: icon })
             .addTo(map)
             .bindPopup(popupContent);
 
-          bounds.extend([station.lat, station.lng]);
           validStations++;
         });
 
         console.log(`Nombre de stations valides affichées : ${validStations}`);
-        if (validStations > 0) {
-          // Inclure la position de l'utilisateur dans les limites
-          if (userPosition) {
-            bounds.extend([userPosition.lat, userPosition.lng]);
-          }
-          map.fitBounds(bounds, { padding: [50, 50] });
-        } else if (userPosition) {
-          // Si aucune station, centrer sur la position de l'utilisateur
+        if (userPosition) {
+          // Centrer strictement sur la position de l'utilisateur
           map.setView([userPosition.lat, userPosition.lng], 12);
+        } else if (validStations > 0) {
+          // Si pas de position utilisateur, centrer sur les stations
+          var bounds = L.latLngBounds();
+          stations.forEach(function (station) {
+            bounds.extend([station.lat, station.lng]);
+          });
+          map.fitBounds(bounds, { padding: [50, 50], maxZoom: 12 });
         } else {
-          console.log("Aucune station valide à afficher et aucune position utilisateur. La carte reste centrée sur la position par défaut.");
+          console.log(
+            "Aucune station valide à afficher et aucune position utilisateur. La carte reste centrée sur la position par défaut."
+          );
         }
       }
 
@@ -294,8 +304,13 @@
             }
           })
           .catch((error) => {
-            console.error("Erreur lors de la récupération des stations:", error);
-            alert("Une erreur est survenue lors de la récupération des stations.");
+            console.error(
+              "Erreur lors de la récupération des stations:",
+              error
+            );
+            alert(
+              "Une erreur est survenue lors de la récupération des stations."
+            );
             if (userPosition) {
               map.setView([userPosition.lat, userPosition.lng], 12);
             }
@@ -309,7 +324,9 @@
           function (position) {
             var userLat = position.coords.latitude;
             var userLon = position.coords.longitude;
-            console.log(`Position de l'utilisateur récupérée : lat=${userLat}, lon=${userLon}`);
+            console.log(
+              `Position de l'utilisateur récupérée : lat=${userLat}, lon=${userLon}`
+            );
 
             // Ajoute un marqueur pour la position de l'utilisateur
             var userMarker = L.marker([userLat, userLon], { icon: userIcon })
@@ -321,19 +338,24 @@
           },
           function (error) {
             console.error("Erreur de géolocalisation:", error);
-            let errorMessage = "Impossible de récupérer votre position. Affichage de la carte par défaut.";
+            let errorMessage =
+              "Impossible de récupérer votre position. Affichage de la carte par défaut.";
             switch (error.code) {
               case error.PERMISSION_DENIED:
-                errorMessage = "Vous avez refusé l'accès à la géolocalisation. Affichage de la carte par défaut.";
+                errorMessage =
+                  "Vous avez refusé l'accès à la géolocalisation. Affichage de la carte par défaut.";
                 break;
               case error.POSITION_UNAVAILABLE:
-                errorMessage = "La position n'est pas disponible. Affichage de la carte par défaut.";
+                errorMessage =
+                  "La position n'est pas disponible. Affichage de la carte par défaut.";
                 break;
               case error.TIMEOUT:
-                errorMessage = "La demande de géolocalisation a expiré. Affichage de la carte par défaut.";
+                errorMessage =
+                  "La demande de géolocalisation a expiré. Affichage de la carte par défaut.";
                 break;
               case error.UNKNOWN_ERROR:
-                errorMessage = "Une erreur inconnue est survenue lors de la géolocalisation. Affichage de la carte par défaut.";
+                errorMessage =
+                  "Une erreur inconnue est survenue lors de la géolocalisation. Affichage de la carte par défaut.";
                 break;
             }
             alert(errorMessage);
@@ -344,7 +366,7 @@
           {
             enableHighAccuracy: true,
             timeout: 10000,
-            maximumAge: 0
+            maximumAge: 0,
           }
         );
       } else {
