@@ -1,14 +1,12 @@
-# Removed unused import
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.contrib.auth.hashers import make_password
 from django.urls import reverse
-from . import views 
-from users.models import ProprietaireVE, Fournisseur, Administrateur
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import login as auth_login
+from users.models import ProprietaireVE, Fournisseur, Administrateur
 
 
 def inscription(request):
@@ -27,9 +25,9 @@ def inscription(request):
 class ProprietaireVE_View_creat(CreateView):
     model = ProprietaireVE
     fields = ['CIN', 'first_name', 'last_name', 'username', 'email', 'phone_number', 'password']
-    template_name ='inscription.html'
-    success_url = '/users/login' 
-    # Redirect to the login page after successful registration
+    template_name = 'inscription.html'
+    success_url = '/users/login/'  # Redirect to the login page after successful registration
+
     def post(self, request, *args, **kwargs):
         # Récupération des données du formulaire
         CIN = request.POST.get('CIN')
@@ -39,24 +37,28 @@ class ProprietaireVE_View_creat(CreateView):
         email = request.POST.get('email')
         phone_number = request.POST.get('phone_number')
         password = request.POST.get('password')
-        
 
         # Vérifier si un champ est vide 
         if not all([CIN, first_name, last_name, username, email, phone_number, password]):
-            return HttpResponse("Please fill in all fields.")
+            return render(request, self.template_name, {'error': "Veuillez remplir tous les champs."})
         
-        if  ProprietaireVE.objects.filter(CIN=CIN).exists()  :
-            return HttpResponse("CIN already exists.")
-        # Check if the email already exists in the database
-        if  ProprietaireVE.objects.filter(email=email).exists() or Fournisseur.objects.filter(email=email).exists() :
-            return HttpResponse("Email already exists.")
-        # Check if the phone number already exists in the database  
-        if  ProprietaireVE.objects.filter(phone_number=phone_number).exists() or Fournisseur.objects.filter(hone_number=phone_number).exists() :
-            return HttpResponse("Phone number already exists.")
-        # Check if the username already exists in the database
-        if ProprietaireVE.objects.filter(username=username).exists() or Fournisseur.objects.filter(username=username).exists() :
-            return HttpResponse("Username already exists.")
+        # Vérifier si le CIN existe déjà
+        if ProprietaireVE.objects.filter(CIN=CIN).exists():
+            return render(request, self.template_name, {'error': "Le CIN existe déjà."})
+
+        # Vérifier si l'email existe déjà
+        if ProprietaireVE.objects.filter(email=email).exists() or Fournisseur.objects.filter(email=email).exists():
+            return render(request, self.template_name, {'error': "L'email existe déjà."})
+
+        # Vérifier si le numéro de téléphone existe déjà
+        if ProprietaireVE.objects.filter(phone_number=phone_number).exists() or Fournisseur.objects.filter(phone_number=phone_number).exists():
+            return render(request, self.template_name, {'error': "Le numéro de téléphone existe déjà."})
+
+        # Vérifier si le nom d'utilisateur existe déjà
+        if ProprietaireVE.objects.filter(username=username).exists() or Fournisseur.objects.filter(username=username).exists():
+            return render(request, self.template_name, {'error': "Le nom d'utilisateur existe déjà."})
         
+        # Créer l'utilisateur
         ProprietaireVE.objects.create(
             CIN=CIN,
             first_name=first_name, 
@@ -65,15 +67,15 @@ class ProprietaireVE_View_creat(CreateView):
             email=email,
             phone_number=phone_number,
             password=make_password(password)
-                )
+        )
         return HttpResponseRedirect(self.success_url)
 
 class Fournisseur_View_creat(CreateView):
     model = Fournisseur
     fields = ['CIN', 'first_name', 'last_name', 'username', 'email', 'phone_number', 'password']
-    template_name ='inscription.html'
-    success_url = '/users/login' 
-    # Redirect to the login page after successful registration
+    template_name = 'inscription.html'
+    success_url = '/users/login/'  # Redirect to the login page after successful registration
+
     def post(self, request, *args, **kwargs):
         # Récupération des données du formulaire
         CIN = request.POST.get('CIN')
@@ -83,35 +85,40 @@ class Fournisseur_View_creat(CreateView):
         email = request.POST.get('email')
         phone_number = request.POST.get('phone_number')
         password = request.POST.get('password') 
-        # Ensure no field is empty
+
+        # Vérifier si un champ est vide
         if not all([CIN, first_name, last_name, username, email, phone_number, password]):
-            return HttpResponse("Please fill in all fields.")
+            return render(request, self.template_name, {'error': "Veuillez remplir tous les champs."})
                 
-                # Check if the CIN or email already exists in the database
-        if  Fournisseur.objects.filter(CIN=CIN).exists() :
-            return HttpResponse("CIN already exists.")
-        # Check if the email already exists in the database
-        if  Fournisseur.objects.filter(email=email).exists()or ProprietaireVE.objects.filter(email=email).exists() :
-            return HttpResponse("Email already exists.")
-        # Check if the phone number already exists in the database  
-        if  Fournisseur.objects.filter(phone_number=phone_number).exists() or ProprietaireVE.objects.filter(phone_number=phone_number).exists() :
-            return HttpResponse("Phone number already exists.")
-        # Check if the username already exists in the database
-        if Fournisseur.objects.filter(username=username).exists() or ProprietaireVE.objects.filter(username=username).exists() :
-            return HttpResponse("Username already exists.")
+        # Vérifier si le CIN existe déjà
+        if Fournisseur.objects.filter(CIN=CIN).exists():
+            return render(request, self.template_name, {'error': "Le CIN existe déjà."})
+
+        # Vérifier si l'email existe déjà
+        if Fournisseur.objects.filter(email=email).exists() or ProprietaireVE.objects.filter(email=email).exists():
+            return render(request, self.template_name, {'error': "L'email existe déjà."})
+
+        # Vérifier si le numéro de téléphone existe déjà
+        if Fournisseur.objects.filter(phone_number=phone_number).exists() or ProprietaireVE.objects.filter(phone_number=phone_number).exists():
+            return render(request, self.template_name, {'error': "Le numéro de téléphone existe déjà."})
+
+        # Vérifier si le nom d'utilisateur existe déjà
+        if Fournisseur.objects.filter(username=username).exists() or ProprietaireVE.objects.filter(username=username).exists():
+            return render(request, self.template_name, {'error': "Le nom d'utilisateur existe déjà."})
         
+        # Créer l'utilisateur
         Fournisseur.objects.create(
-                        CIN=CIN,
-                        first_name=first_name,
-                        last_name=last_name,
-                        username=username,
-                        email=email,
-                        phone_number=phone_number,
-                        password=make_password(password)
-                    )
+            CIN=CIN,
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            email=email,
+            phone_number=phone_number,
+            password=make_password(password)
+        )
         return HttpResponseRedirect(self.success_url)
     
-# login part for the users
+# Login part for the users
 def login(request):
     if request.method == 'GET':
         return render(request, 'login.html')
@@ -128,76 +135,70 @@ def login(request):
             return view(request)
     return render(request, 'login.html')
 
-
 class ProprietaireVE_View_login(LoginView):
     model = ProprietaireVE
     fields = ['email', 'password']
-    template_name ='login.html'
+    template_name = 'login.html'
     
-    # Redirect to the login page after successful registration
     def post(self, request, *args, **kwargs):
         # Récupération des données du formulaire
         email = request.POST.get('email')
         password = request.POST.get('password')
-        # Ensure no field is empty
+        # Vérifier si un champ est vide
         if not all([email, password]):
-            return HttpResponse("Please fill in all fields.")
+            return render(request, self.template_name, {'error': "Veuillez remplir tous les champs."})
         if ProprietaireVE.objects.filter(email=email).exists():
             user = ProprietaireVE.objects.get(email=email)
             if user.check_password(password):
                 auth_login(request, user)
                 return HttpResponseRedirect(reverse('Home:Home', args=[user.username]))
             else:
-                return HttpResponse("Invalid password.")
-        return HttpResponse("User does not exist.")
+                return render(request, self.template_name, {'error': "Mot de passe invalide."})
+        return render(request, self.template_name, {'error': "Utilisateur introuvable."})
 
 class Fournisseur_View_login(LoginView):
     model = Fournisseur
     fields = ['email', 'password']
-    template_name ='login.html'
+    template_name = 'login.html'
   
     def post(self, request, *args, **kwargs):
         # Récupération des données du formulaire
         email = request.POST.get('email')
         password = request.POST.get('password')
-        # Ensure no field is empty
+        # Vérifier si un champ est vide
         if not all([email, password]):
-            return HttpResponse("Please fill in all fields.")
+            return render(request, self.template_name, {'error': "Veuillez remplir tous les champs."})
         if Fournisseur.objects.filter(email=email).exists():
             user = Fournisseur.objects.get(email=email)
             if user.check_password(password):
                 auth_login(request, user)
                 return HttpResponseRedirect(reverse('Home:Home', args=[user.username]))
             else:
-                return HttpResponse("Invalid password.")
-        return HttpResponse("User does not exist.")
+                return render(request, self.template_name, {'error': "Mot de passe invalide."})
+        return render(request, self.template_name, {'error': "Utilisateur introuvable."})
     
-#login part for the admin a !!!!!! chenger vere superadmin
+# Login part for the admin
 class Administrateur_View_login(LoginView):
     model = Administrateur
     fields = ['email', 'password']
-    template_name ='login.html'
+    template_name = 'login.html'
     
     def post(self, request, *args, **kwargs):
         # Récupération des données du formulaire
         email = request.POST.get('email')
         password = request.POST.get('password')
-        # Ensure no field is empty
+        # Vérifier si un champ est vide
         if not all([email, password]):
-            error="Veuillez remplir tous les champs."
-            render(request, 'login.html', {'error': error})
+            return render(request, self.template_name, {'error': "Veuillez remplir tous les champs."})
         if Administrateur.objects.filter(email=email).exists():
             user = Administrateur.objects.get(email=email)
             if user.check_password(password):
                 auth_login(request, user)
                 return HttpResponseRedirect(reverse('Home:Home', args=[user.username]))
             else:
-                error="Invalid password."
-                return render(request, 'login.html', {'error': error})
-        else:
-            error="User does not exist."
-            return render(request, 'login.html', {'error': error})
-    
+                return render(request, self.template_name, {'error': "Mot de passe invalide."})
+        return render(request, self.template_name, {'error': "Utilisateur introuvable."})
+
 def profile(request, username):
     # Récupérer l'utilisateur en fonction du type
     if ProprietaireVE.objects.filter(username=username).exists():

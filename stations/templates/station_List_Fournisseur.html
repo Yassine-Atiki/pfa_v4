@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %} 
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -17,42 +17,50 @@
         <td>photos</td>
         <td>note</td>
         <td>disponibilite</td>
+        <td>nom</td>
+        <td>latitude</td>
+        <td>longitude</td>
       </tr>
       {% for station in stations %}
-
       <tr>
         <td>{{station.adresse}}</td>
         <td>{{station.puissance}}</td>
         <td>{{station.prix_kw}}</td>
-            <td>
-                <div style="display: flex; flex-wrap: wrap; gap: 10px">
-                    {% for photo in station.photos.all %}
-                    <div
-                      style="display: flex; flex-direction: column; align-items: center"
-                    >
-                      <img src="{{ photo.image.url }}" alt="photo" width="100" />
-                    </div>
-                    {% endfor %}
-                  </div>
-              </td>
-        <td>{{note}}</td>
+        <td>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            {% for photo in station.photos.all %}
+            <div
+              style="display: flex; flex-direction: column; align-items: center"
+            >
+              <img
+                src="/static{{ photo.image.url }}"
+                style="width: 100px"
+                alt="Photo de la station"
+              />
+            </div>
+            {% endfor %}
+          </div>
+        </td>
+        <td><a href="">{{note}}</a></td>
         {% if station.disponibilite == 1 %}
         <td>Disponible actuellement</td>
         {% else %}
         <td>Temporairement indisponible</td>
         {% endif %}
+        <td>{{station.nom}}</td>
+        <td>{{station.latitude}}</td>
+        <td>{{station.longitude}}</td>
         <td>
           <a href="/stations/delete_station/{{station.ID_Station}}/{{username}}"
             >DELETE</a
           >
         </td>
         <td>
-          <a
-            href="/stations/update_station/{{station.ID_Station}}/{{username}}"
+          <a href="/stations/update_station/{{station.ID_Station}}/{{username}}"
+            >update</a
           >
-            update
-          </a>
         </td>
+        <td><a href="">statistique</a></td>
       </tr>
       {% endfor %}
     </table>

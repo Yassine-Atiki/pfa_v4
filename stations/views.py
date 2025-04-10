@@ -43,9 +43,12 @@ def add_station(request, username):
         prix_kw = request.POST.get('prix_kw')
         disponibilite = request.POST.get('disponibilite')
         photos = request.FILES.getlist('photos[]')
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+        nom = request.POST.get('nom')
 
         # Vérification des champs requis
-        if not all([adresse, puissance, prix_kw, disponibilite]):
+        if not all([adresse, puissance, prix_kw, disponibilite, latitude, longitude,nom]):
             error = {'error': 'All fields are required.'}
             return render(request, 'ADD_Station.html', {'error': error, 'username': username})
 
@@ -62,6 +65,9 @@ def add_station(request, username):
             puissance=puissance,
             prix_kw=prix_kw,
             disponibilite=disponibilite,
+            latitude=latitude,
+            longitude=longitude,
+            nom=nom
         )
         new_station.save()
 
@@ -99,9 +105,12 @@ def update_station(request, ID_Station, username):
         prix_kw = request.POST.get('prix_kw')
         disponibilite = request.POST.get('disponibilite')
         photos = request.FILES.getlist('photos[]')
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+        nom = request.POST.get('nom')
 
         # Vérification des champs requis
-        if not all([adresse, puissance, prix_kw, disponibilite]):
+        if not all([adresse, puissance, prix_kw, disponibilite, latitude, longitude, nom]):
             error = {'error': 'All fields are required.'}
             return render(request, 'update_station.html', {'error': error, 'station': station_update, 'username': username})
 
@@ -110,6 +119,9 @@ def update_station(request, ID_Station, username):
         station_update.puissance = puissance
         station_update.prix_kw = prix_kw
         station_update.disponibilite = disponibilite
+        station_update.latitude = latitude
+        station_update.longitude = longitude
+        station_update.nom = nom
         station_update.save()
 
         for photo_file in photos:
