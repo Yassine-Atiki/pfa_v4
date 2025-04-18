@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure--%dq^mlopl@%ffcs+90b4_c&29-76bv%plc5bxo^8x62hvil9d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.3', 'localhost', '127.0.0.1']
+
 
 CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
 # Application definition
